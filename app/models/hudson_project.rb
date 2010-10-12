@@ -1,6 +1,8 @@
 class HudsonProject < Project
   validates_format_of :feed_url, :with =>  /http:\/\/.*job\/.*\/rssAll$/
 
+  before_save :update_base_path
+
   def project_name
     return nil if feed_url.nil?
     URI.parse(feed_url).path.scan(/^.*job\/(.*)/i)[0][0].split('/').first
@@ -10,9 +12,14 @@ class HudsonProject < Project
     return nil if feed_url.nil?
 
     url_components = URI.parse(feed_url)
+    base_uri = nil
+    if url_components.path.match(%r|/(\w+)/job|)
+      base_uri = "/#{$1}"
+    end
+
     returning("#{url_components.scheme}://#{url_components.host}") do |url|
       url << ":#{url_components.port}" if url_components.port
-      url << "/cc.xml"
+      url << "#{base_uri}/cc.xml"
     end
   end
 
@@ -42,4 +49,15 @@ class HudsonProject < Project
     document.css("#{path}") if document
   end
 
+  def update_base_path
+    return if feed_url.blank?
+
+    path = nil
+    if feed_url.match(%r|/(\w+)/job|)
+      path = "/#{$1}"
+    end
+    return if path.nil?
+
+    self.base_path = path
+  end
 end

@@ -21,6 +21,25 @@ describe HudsonProject do
     end
   end
 
+  describe "#base_path" do
+    it "should not try setting it if feed_url is blank" do
+      @project.feed_url = nil
+      @project.save
+      @project.base_path.should be_nil
+    end
+    it "should not set it if no base path found in feed url" do
+      @project.feed_url = "http://foo.bar.com:3434/job/example_project/rssAll"
+      @project.save
+      @project.base_path.should be_nil
+    end
+    it "should set it if the feed_url has a base path" do
+      @project.feed_url = "http://foo.bar.com:3434/hudson/job/example_project/rssAll"
+      @project.save
+      @project.base_path.should == '/hudson'
+    end
+
+  end
+
   describe 'validations' do
     it "should require a Hudson url format" do
       @project.should have(0).errors_on(:feed_url)
@@ -34,6 +53,10 @@ describe HudsonProject do
   describe "#build_status_url" do
     it "should use cc.xml" do
       @project.build_status_url.should == "http://foo.bar.com:3434/cc.xml"
+    end
+    it "should use the base uri if it exists" do
+      @project.feed_url = "http://foo.bar.com:3434/hudson/job/example_project/rssAll"
+      @project.build_status_url.should == "http://foo.bar.com:3434/hudson/cc.xml"
     end
   end
 

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100525144035) do
+ActiveRecord::Schema.define(:version => 20101012141942) do
 
   create_table "messages", :force => true do |t|
     t.string   "text"
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(:version => 20100525144035) do
     t.string   "type",             :default => "CruiseControlProject", :null => false
     t.integer  "polling_interval"
     t.datetime "next_poll_at"
+    t.string   "base_path"
   end
 
   create_table "sessions", :force => true do |t|

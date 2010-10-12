@@ -10,7 +10,7 @@
    end
 %>
 
-<div class="box" project_id="<%= project.id %>" style="background: url('/images/<%= background %>.png') no-repeat top left">
+<div class="box" project_id="<%= project.id %>" style="background: url('<%= image_path("#{background}.png") %>') no-repeat top left">
   <div class="project_name <%= project.green? ? 'success' : 'error' %>">
     <h1><%= link_to(h(project.name), project.status.url) %></h1>
   </div>

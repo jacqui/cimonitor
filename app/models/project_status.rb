@@ -1,5 +1,6 @@
 class ProjectStatus < ActiveRecord::Base
   belongs_to :project
+  before_save :set_url_with_base_path
 
   SUCCESS = 'success'
   FAILURE = 'failure'
@@ -32,4 +33,13 @@ class ProjectStatus < ActiveRecord::Base
       other.send(attribute) == self.send(attribute)
     end
   end
+
+  def set_url_with_base_path
+    if project && project.kind_of?(HudsonProject) && !project.base_path.blank? && URI.parse(url).path !~ %r|/#{project.base_path}|
+      self[:url] = url.sub(/\/job/, "#{project.base_path}/job")
+    else
+      self[:url] = url
+    end
+  end
+
 end

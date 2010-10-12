@@ -8,7 +8,7 @@ describe ProjectStatus do
   it "should default to not online" do
     @project_status.should_not be_online
   end
-  
+
   describe "in_words" do
     it "returns success for a successful status" do
       status = project_statuses(:socialitis_status_green_01)
@@ -34,6 +34,23 @@ describe ProjectStatus do
       end
     end
 
+    describe "urls" do
+      before(:each) do
+        @project = HudsonProject.create(:name => "my_hudson_project", :feed_url => "http://foo.bar.com:3434/job/example_project/rssAll")
+        @project_status = ProjectStatus.new(:project => @project)
+      end
+      it "should include the project's base_path in the url if set" do
+        @project.update_attributes(:feed_url => "http://foo.bar.com:3434/hudson/job/example_project/rssAll")
+        @project_status.update_attributes(:url => "http://int-builds.prvt.nytimes.com/job/election%202010/464/")
+        @project_status.url.should == "http://int-builds.prvt.nytimes.com/hudson/job/election%202010/464/"
+      end
+      it "should not include a base path if the project's feed url doesn't have one" do
+        @project.update_attributes(:feed_url => "http://foo.bar.com:3434/job/example_project/rssAll")
+        @project_status.update_attributes(:url => "http://int-builds.prvt.nytimes.com/job/election%202010/464/")
+        @project_status.url.should == "http://int-builds.prvt.nytimes.com/job/election%202010/464/"
+      end
+    end
+  
     describe "for an online status" do
       it "should return false for a hash with :online => false" do
         ProjectStatus.new(online_status_hash).match?(ProjectStatus.new(online_status_hash(:online => false))).should be_false

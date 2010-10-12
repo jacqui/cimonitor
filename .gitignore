@@ -10,3 +10,4 @@ config/initializers/site_keys.rb
 .rvmrc
 .pairs
 db/*sqlite
+vendor/cache

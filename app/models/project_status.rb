@@ -35,7 +35,7 @@ class ProjectStatus < ActiveRecord::Base
   end
 
   def set_url_with_base_path
-    if project && project.kind_of?(HudsonProject) && !project.base_path.blank? && URI.parse(url).path !~ %r|/#{project.base_path}|
+    if project && project.kind_of?(HudsonProject) && !project.base_path.blank? && URI.parse(url).path !~ %r|#{project.base_path}|
       self[:url] = url.sub(/\/job/, "#{project.base_path}/job")
     else
       self[:url] = url

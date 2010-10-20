@@ -11,7 +11,8 @@ function scheduleRefresh() {
 }
 
 function refresh() {
-  var cimonitorUrl = "/cimonitor";
+  var cimonitorUrl = "/pivotal/cimonitor";
+
   if (document.location) {
     cimonitorUrl += document.location.search;// copy all the ?params and add them to the cimonitor URL
     window.frames[0].location = cimonitorUrl;
